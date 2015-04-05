@@ -19,3 +19,4 @@ local
 
 local = cbind (c(10,7,0,0), c(65,68,75,75))
 fisher.test (local)
+
