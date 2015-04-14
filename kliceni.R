@@ -18,10 +18,15 @@ local
 #LITORELA
 
 #test if true probability of germination of seeds covered by 1cm of soil is the same as for the control
-binom.test(7, 68, 0.1333333333)
+binom.test(7, 68, 0.1333333333) #LABORKA
+binom.test (26,49, 0.53333333333333) #VENKU
+binom.test (33,117,0.33333333333333) #LABORKA + VENKU
+
 
 #test if true probability of germination of seeds covered by 3 and 5 cm of soil is the same as for the control
 binom.test(0, 75, 0.1333333333)
+binom.test(0, 75, 0.53333333333333)
+binom.test(0, 150, 0.33333333333333)
 
 #I have doubts about these test because i am doing multiple comparisons
 #, which is not statisticaly correct. I should try something else...
@@ -32,3 +37,17 @@ binom.test(0, 75, 0.1333333333)
 local = cbind (c(10,7,0,0), c(65,68,75,75))
 fisher.test (local)
 
+setwd ("C:/Users/pavel/Downloads/Dropbox/Litorela uniflora/")
+data=read.csv ("data.csv", header=TRUE, sep=";")
+names(data)
+str(data)
+p=data$germ/data$n
+p
+interaction.plot(data$exp,data$treatment, p)
+y=cbind(data$germ, data$n - data$germ)
+m1=glm(y~data$exp*data$treatment, family=binomial)
+anova(m1, test="Chi")
+m2=update(m1, ~. -data$exp:data$treatment)
+anova(m2,test="Chi")
+summary(m2)
+plot (m2, which=2)
