@@ -36,18 +36,27 @@ binom.test(0, 150, 0.33333333333333)
 #some bulshit - delete it
 local = cbind (c(10,7,0,0), c(65,68,75,75))
 fisher.test (local)
-
+#Binomial model
 setwd ("C:/Users/pavel/Downloads/Dropbox/Litorela uniflora/")
-data=read.csv ("data.csv", header=TRUE, sep=";")
+data=read.csv ("data.csv", header=TRUE, sep=";") #data with only final values are used
 names(data)
 str(data)
+#probability of success is counted and stored as "p"
 p=data$germ/data$n
 p
-interaction.plot(data$exp,data$treatment, p)
+#check for interactions
+interaction.plot(data$exp,data$treatment, p) #no interaction was found
+
 y=cbind(data$germ, data$n - data$germ)
+#model with an interaction
 m1=glm(y~data$exp*data$treatment, family=binomial)
 anova(m1, test="Chi")
+#model without an interaction
 m2=update(m1, ~. -data$exp:data$treatment)
 anova(m2,test="Chi")
 summary(m2)
+#check if one of the models is significantly better
+AIC(m1,m2)
+#plot the selected model to check the fit
 plot (m2, which=2)
+
