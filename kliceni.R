@@ -37,10 +37,12 @@ binom.test(0, 150, 0.33333333333333)
 local = cbind (c(10,7,0,0), c(65,68,75,75))
 fisher.test (local)
 #Binomial model
-setwd ("C:/Users/pavel/Downloads/Dropbox/Litorela uniflora/")
+setwd ("C:/Users/pavel/Downloads/Dropbox/Litorela uniflora/") #doma
+setwd ("C:/Users/jakubecp/Dropbox/Litorela uniflora") #skola
 data=read.csv ("data.csv", header=TRUE, sep=";") #data with only final values are used
 names(data)
 str(data)
+data$treatment=factor (data$treatment)
 #probability of success is counted and stored as "p"
 p=data$germ/data$n
 p
@@ -59,4 +61,13 @@ summary(m2)
 AIC(m1,m2)
 #plot the selected model to check the fit
 plot (m2, which=2)
+#quasibinomial distribution of errors because residual deviance is twice of residual degrees of freedom
+m3=update(m2, family=quasibinomial)
+summary(m3)
+anova(m3, test="F")
+# estimate of relative germination
+#venku
+1/(1+exp(-0.3018))
+#v laborce
+1/(1+exp(-0.3018+1.8989))
 
