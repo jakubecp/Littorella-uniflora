@@ -3,18 +3,6 @@
 #2. proklicovani - puvodni venkovni experiment - stejne zpracovani, bacha kontrola je z jineho data,
 # takze spis jen pro nastaveni nejake hranice klicivosti
 
-#EXAMPLE!!!!!!!!!!!!!!!
-#test for feeding choice experiment (8 ladybirds ate the egg out of 24)
-
-
-# test for difference between number of parasitized ladybirds which ate the boiled eggs and which did not (p = 0.38).
-binom.test(7, 10, 0.38)
-#test for difference between number of parasitized ladybirds between wageningen and radwijk
-local = rbind (c(60,10), c(22,15))
-local
-?fisher.test (local)
-
-
 #LITORELA
 
 #test if true probability of germination of seeds covered by 1cm of soil is the same as for the control
@@ -27,7 +15,8 @@ binom.test (33,117,0.33333333333333) #LABORKA + VENKU
 binom.test(0, 75, 0.1333333333)
 binom.test(0, 75, 0.53333333333333)
 binom.test(0, 150, 0.33333333333333)
-
+install.packages ("ggplot2")
+library (ggplot2)
 #I have doubts about these test because i am doing multiple comparisons
 #, which is not statisticaly correct. I should try something else...
 
@@ -91,12 +80,7 @@ plot (m2, which=1)
 m3=update(m2, family=quasibinomial)
 summary(m3)
 anova(m3, test="F")
-# estimate of relative germination
-#venku
-1/(1+exp(-0.3018))
-#v laborce
-1/(1+exp(-0.3018+1.8989))
-x=seq(0,5,by=0.1)
+=seq(0,5,by=0.1)
 plot (data$treatment, p)
 
 lines (x, predict (m2, data.frame(data$treatment=x)type="response"))
@@ -110,6 +94,7 @@ abline(a=nll.allG$par[2],b=nll.allG$par[3], col='red', lty=2)
 
 #FINAL MODEL
 rm(list=ls())
+library(ggplot2)
 setwd ("C:/Users/pavel/Downloads/Dropbox/Litorela uniflora/") #notas
 setwd ("C:/Users/jakubecp/Dropbox/Litorela uniflora") #skola
 setwd ("/home/pavel/Dropbox/Litorela uniflora")
@@ -119,15 +104,27 @@ attach(data)
 p=germ/n
 y=cbind(germ, n - germ)
 m1=glm(y~exp+treatment, family=binomial)
+summary (m1)
 pr=resid(m1,type="pearson")
-plot (treatment, pr)
+qplot (treatment, pr)
 x=seq(0,6,0.1)
-plot (treatment,p, xlab="Soil depth", ylab="Germination", main = "")
+plot (treatment,p, xlab="Soil depth", ylab="Germination", main = "", pch=16)
+lines (x, predict (m1, list(treatment=x, exp=factor(rep("ext", length(x)), levels=levels(exp))), type="response"), lty=2)
 lines (x, predict (m1, list(treatment=x, exp=factor(rep("lab", length(x)), levels=levels(exp))), type="response"))
-lines (x, predict (m1, list(treatment=x, exp=factor(rep("ext", length(x)), levels=levels(exp))), type="response"))
+legend (3.5,0.5, c("Laboratory", "Glasshouse"), lty=1:2)
 
+#germination decrease with increasing depth of soil layer
 library (MASS)
 m2 = glm (y~exp+treatment-1, family=binomial)
 summary (m2)
-dose.p (m2, cf=c(1,3), p=0.01)
-dose.p (m2, cf=c(2,3), p=0.01)
+dose.p (m2, cf=c(1,3), p=0.05)
+dose.p (m2, cf=c(2,3), p=0.05)
+
+
+# estimate of relative germination
+#venku
+1/(1+exp(-0.2024))
+#v laborce
+1/(1+exp(-0.2024-0.3148))
+
+
