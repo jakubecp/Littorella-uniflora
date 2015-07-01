@@ -32,7 +32,7 @@ setwd ("C:/Users/pavel/Downloads/Dropbox/Litorela uniflora/") #notas
 setwd ("C:/Users/jakubecp/Dropbox/Litorela uniflora") #skola
 setwd ("/home/pavel/Dropbox/Litorela uniflora")
 
-data=read.csv ("data.csv", header=TRUE, sep=";") #data with only final values are used
+data=read.csv ("data2.csv", header=TRUE, sep=";") #data with only final values are used
 names(data)
 str(data)
 data_lab =data[data$exp == "lab",]
@@ -51,7 +51,7 @@ y_lab=cbind(data_lab$germ, data_lab$n - data_lab$germ)
 y_ext=cbind(data_ext$germ, data_ext$n - data_ext$germ)
 #model with an interaction
 m1=glm(y~data$exp*data$treatment, family=binomial)
-anova(m1, test="F")
+anova(m1, test="Ch")
 summary (m1)
 m2=glm(y~data$exp+data$treatment, family=binomial)
 m3=glm(y~data$treatment, family=binomial)
@@ -80,7 +80,7 @@ plot (m2, which=1)
 m3=update(m2, family=quasibinomial)
 summary(m3)
 anova(m3, test="F")
-=seq(0,5,by=0.1)
+x=seq(0,5,by=0.1)
 plot (data$treatment, p)
 
 lines (x, predict (m2, data.frame(data$treatment=x)type="response"))
@@ -97,22 +97,42 @@ rm(list=ls())
 library(ggplot2)
 setwd ("C:/Users/pavel/Downloads/Dropbox/Litorela uniflora/") #notas
 setwd ("C:/Users/jakubecp/Dropbox/Litorela uniflora") #skola
-setwd ("/home/pavel/Dropbox/Litorela uniflora")
-data=read.csv ("data.csv", header=TRUE, sep=";")
+setwd ("/home/pavel/Dropbox/Litorela uniflora") #comp
+data=read.csv ("data2.csv", header=TRUE, sep=";")
 head(data)
 attach(data)
+data_lab =data[data$exp == "lab",]
+data_ext =data[data$exp == "ext",]
 p=germ/n
 y=cbind(germ, n - germ)
 m1=glm(y~exp+treatment, family=binomial)
+anova(m1, test="Chi")
 summary (m1)
 pr=resid(m1,type="pearson")
-qplot (treatment, pr)
-x=seq(0,6,0.1)
-plot (treatment,p, xlab="Soil depth", ylab="Germination", main = "", pch=16)
-lines (x, predict (m1, list(treatment=x, exp=factor(rep("ext", length(x)), levels=levels(exp))), type="response"), lty=2)
-lines (x, predict (m1, list(treatment=x, exp=factor(rep("lab", length(x)), levels=levels(exp))), type="response"))
-legend (3.5,0.5, c("Laboratory", "Glasshouse"), lty=1:2)
+#qqplot2 pokus o plot s SE
+ggplot(data, aes(x=treatment, y=p, colour=factor (exp))) + 
+  geom_point(shape=1) + 
+  #stat_smooth(method="glm", family="binomial", se=F, size=1) #+
+  geom_smooth (size=1)
 
+
+
+grid <- with(data, expand.grid(
+  exp = levels(factor(exp)),
+  treatment = seq(min(treatment), max(treatment), length = 12 )))
+grid$y <- stats::predict(m1, newdata=grid)
+qplot(treatment, y, data=data, colour=factor (exp)) + geom_line(data=grid)
+x=seq(0,6,0.1)
+X11()
+plot (data_lab$treatment,p[exp=="lab"], xlab="Soil depth (cm)", ylab="Germination probability", ylim=c(0,0.65), main = "", pch=16, col="blue")
+points (data_ext$treatment,p[exp=="ext"], pch=16, col="red")
+lines (x, predict (m1, list(treatment=x, exp=factor(rep("ext", length(x)), levels=levels(exp))), type="response"), lty=2, col="red")
+lines (x, predict (m1, list(treatment=x, exp=factor(rep("lab", length(x)), levels=levels(exp))), type="response"), col="blue")
+legend (3.6,0.65, c("Laboratory", "Glasshouse"), lty=1:2, col=c("blue", "red"))
+dev.print(tiff, "image.tiff", compression = "lzw", res=600, height=12, width=12, units="in")
+tiff ("image.tiff", compression = "lzw", res=600, height=8, width=8, units="in")
+##plot()
+dev.off()
 #germination decrease with increasing depth of soil layer
 library (MASS)
 m2 = glm (y~exp+treatment-1, family=binomial)
@@ -127,4 +147,11 @@ dose.p (m2, cf=c(2,3), p=0.05)
 #v laborce
 1/(1+exp(-0.2024-0.3148))
 
-
+m0=mean (data_lab$germ [data_lab$treatment ==0])
+p0=(m0/25)*100
+s0= sd (data_lab$germ [data_lab$treatment ==0])
+sd0= (s0/25)*100
+m0=mean (data_ext$germ [data_ext$treatment ==0])
+p0=(m0/25)*100
+s0=sd (data_ext$germ [data_ext$treatment ==0])
+sd0= (s0/25)*100
