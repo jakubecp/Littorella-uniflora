@@ -17,8 +17,11 @@ if (packageVersion("devtools") < 1.6) {
 }
 devtools::install_github("hadley/lazyeval")
 devtools::install_github("hadley/dplyr")
-
+devtools::install_github("hadley/tidyr")
 
 # have to restructuralized the data ...
 library(dplyr)
 library (lazyeval)
+library(tidyr)
+data=read.csv ("resubmision/prolicovani_ruzne_substraty.csv", header=TRUE, sep=";") 
+
