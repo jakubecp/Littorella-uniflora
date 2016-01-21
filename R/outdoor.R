@@ -4,6 +4,7 @@ library(dplyr)
 library (lazyeval)
 library(tidyr)
 library(reshape2)
+library(ggplot2)
 
 data=read.csv ("resubmision/proklicovani_sklenik.csv", header=TRUE, sep=";") 
 
@@ -20,7 +21,7 @@ plot (substr$depth, substr$germ)
 
 #results will go into this data frame and will be used for further analysis
 levels (substr$depth)
-treat <- c("a", "b", "c", "d")
+treat <- c("0", "1", "3", "5")
 germ <- c(sum (substr$germ [substr$depth == "a"]),
           sum (substr$germ [substr$depth == "b"]),
           sum (substr$germ [substr$depth == "c"]),
@@ -37,3 +38,10 @@ m1=glm(y~treat, family=binomial)
 anova(m1, test="Ch")
 summary (m1)
 
+#ploting original data (not model)
+ggplot(substr, aes(x=depth, y=germ))+
+  geom_boxplot ()
+
+#plot of probability of germintion on depth of soil layer
+ggplot (data_glass, aes (x=treat, y=p))+
+  geom_point(size=3)
