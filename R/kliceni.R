@@ -98,7 +98,7 @@ library(ggplot2)
 setwd ("C:/Users/pavel/Downloads/Dropbox/Litorela uniflora/") #notas
 setwd ("C:/Users/jakubecp/Dropbox/Litorela uniflora") #skola
 setwd ("/home/pavel/Dropbox/Litorela uniflora") #comp
-data=read.csv ("data2.csv", header=TRUE, sep=";")
+data=read.csv ("data/data2.csv", header=TRUE, sep=";")
 head(data)
 attach(data)
 data_lab =data[data$exp == "lab",]
