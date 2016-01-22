@@ -21,7 +21,7 @@ plot (substr$depth, substr$germ)
 
 #results will go into this data frame and will be used for further analysis
 levels (substr$depth)
-treat <- c("0", "1", "3", "5")
+treat <- c(0,1,3,5)
 germ <- c(sum (substr$germ [substr$depth == "a"]),
           sum (substr$germ [substr$depth == "b"]),
           sum (substr$germ [substr$depth == "c"]),
@@ -45,3 +45,9 @@ ggplot(substr, aes(x=depth, y=germ))+
 #plot of probability of germintion on depth of soil layer
 ggplot (data_glass, aes (x=treat, y=p))+
   geom_point(size=3)
+
+#germination decrease with increasing depth of soil layer
+library (MASS)
+summary (m1)
+dose.p (m1, cf=c(1:2), p=seq(0.01,0.9,0.05))
+

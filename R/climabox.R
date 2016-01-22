@@ -36,3 +36,16 @@ y<-cbind(germ, total - germ) # this vector should be feedid into binomial model
 m1=glm(y~treat, family=binomial)
 anova(m1, test="Ch")
 summary (m1)
+
+#ploting original data (not model)
+ggplot(substr, aes(x=depth, y=germ))+
+  geom_boxplot ()
+
+#plot of probability of germintion on depth of soil layer
+ggplot (data_klima, aes (x=treat, y=p))+
+  geom_point(size=3)
+
+#germination decrease with increasing depth of soil layer
+library (MASS)
+summary (m1)
+dose.p (m1, cf=c(1:2), p=seq(0.01,0.9,0.05))
