@@ -26,13 +26,13 @@ library (ggplot2)
 local = cbind (c(10,7,0,0), c(65,68,75,75))
 fisher.test (local)
 #Binomial model
-list()
-rm(list=ls())
-setwd ("C:/Users/pavel/Downloads/Dropbox/Litorela uniflora/") #notas
-setwd ("C:/Users/jakubecp/Dropbox/Litorela uniflora") #skola
-setwd ("/home/pavel/Dropbox/Litorela uniflora")
 
-data=read.csv ("data2.csv", header=TRUE, sep=";") #data with only final values are used
+rm(list=ls())
+# setwd ("C:/Users/pavel/Downloads/Dropbox/Litorela uniflora/") #notas
+# setwd ("C:/Users/jakubecp/Dropbox/Litorela uniflora") #skola
+# setwd ("/home/pavel/Dropbox/Litorela uniflora")
+
+data=read.csv ("data/data2.csv", header=TRUE, sep=";") #data with only final values are used
 names(data)
 str(data)
 data_lab =data[data$exp == "lab",]
@@ -95,9 +95,9 @@ abline(a=nll.allG$par[2],b=nll.allG$par[3], col='red', lty=2)
 #FINAL MODEL
 rm(list=ls())
 library(ggplot2)
-setwd ("C:/Users/pavel/Downloads/Dropbox/Litorela uniflora/") #notas
-setwd ("C:/Users/jakubecp/Dropbox/Litorela uniflora") #skola
-setwd ("/home/pavel/Dropbox/Litorela uniflora") #comp
+# setwd ("C:/Users/pavel/Downloads/Dropbox/Litorela uniflora/") #notas
+# setwd ("C:/Users/jakubecp/Dropbox/Litorela uniflora") #skola
+# setwd ("/home/pavel/Dropbox/Litorela uniflora") #comp
 data=read.csv ("data/data2.csv", header=TRUE, sep=";")
 head(data)
 attach(data)
@@ -112,9 +112,9 @@ pr=resid(m1,type="pearson")
 #qqplot2 pokus o plot s SE
 ggplot(data, aes(x=treatment, y=p, colour=factor (exp))) + 
   geom_point(shape=1) + 
-  #stat_smooth(method="glm", family="binomial", se=F, size=1) #+
-  geom_smooth (size=1)
-
+  stat_smooth(method="glm", se=T, size=1)
+  
+  
 
 
 grid <- with(data, expand.grid(
