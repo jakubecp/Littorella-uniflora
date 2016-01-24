@@ -16,7 +16,7 @@ head (substr) #see how it looks like
 names (substr) <- c("loc", "dish", "date", "germ") #meaningful names of variables
 #data exploration
 summary (substr)
-mean (substr$germ [substr$loc == "b"])
+mean (substr$germ [substr$loc == "ka"])
 str (substr)
 plot (substr$loc, substr$germ)
 
