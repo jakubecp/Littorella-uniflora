@@ -1,10 +1,11 @@
 rm(list=ls())
 # reshaping the data to be in tidy format
-library(dplyr)
-library (lazyeval)
-library(tidyr)
-library(reshape2)
-
+library(dplyr) # manipulation with original data
+library (lazyeval) # manipulation with original data
+library(tidyr) # manipulation with original data
+library(reshape2) # manipulation with original data
+library(ggplot2) # plotting graphs
+library(Rmisc) # summarySE function for SE and CI calcul. and ploting
 data=read.csv ("resubmision/prolicovani_ruzne_substraty.csv", header=TRUE, sep=";") 
 
 #treat will be left out and not melted, but rest will be
@@ -42,4 +43,20 @@ m1=glm(y~treat, family=binomial)
 anova(m1, test="Ch")
 summary (m1)
 
+#barplot of development times across temperatures
+#summarySE is function defined in script summarySE.R which is preparing data to
+#be ploted with SE or confidence intervals...
+sumary.dev = summarySE (substr, 
+  measurevar="count", groupvars="treat")
 
+# tiff (filename="outputs/soils_barplots.tiff", 
+#   width=5000, height=5000, 
+#   compression="lzw", res= 800)
+p = ggplot (sumary.dev, aes (y=count, x=treat))
+p + stat_summary(fun.y=median, geom="bar", position=position_dodge())+
+  xlab("Germination substrate")+
+  ylab("Median of germinated seeds")+
+    geom_errorbar(aes(ymin=count, ymax=count+se),
+    width=.2,                    # Width of the error bars
+    position=position_dodge(.9))
+# dev.off()
