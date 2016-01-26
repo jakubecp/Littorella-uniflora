@@ -62,7 +62,7 @@ tiff (filename="outputs/climabox_barplots_depth.tiff",
 p = ggplot (sumary.dev, aes (y=germ, x=depth))
 p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Depth of substrate")+
-  ylab("Mean number of germinated seeds")+
+  ylab("Mean number of germinated seeds / visit")+
   geom_errorbar(aes(ymin=germ-se, ymax=germ+se),
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))+
@@ -116,4 +116,3 @@ p0
 s0=sd(depth3)
 sd0=(s0/25)*100
 sd0
-
