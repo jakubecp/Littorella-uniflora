@@ -49,9 +49,11 @@ ggplot (data_glass, aes (x=treat, y=p))+
 
 #germination decrease with increasing depth of soil layer
 summary (m1)
-dose.p (m1, cf=c(1:2), p=seq(0.01,0.9,0.05))
+dose.p (m1, cf=c(1:2), p=seq(0.05,0.9,0.05))
 
-#barplot of mean or median germination success across different substrates.#summarySE is function, which is preparing data to be ploted with SE or confidence intervals...
+#barplot of mean or median germination success across different substrates.
+#summarySE is function, which is preparing data to be ploted with SE or 
+#confidence intervals...
 sumary.dev = summarySE (substr, measurevar="germ", groupvars="depth")
 
 tiff (filename="outputs/glass_barplots_depth.tiff", 
@@ -60,9 +62,59 @@ tiff (filename="outputs/glass_barplots_depth.tiff",
 p = ggplot (sumary.dev, aes (y=germ, x=depth))
 p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Depth of substrate")+
-  ylab("Mean number of germinated seeds")+
+  ylab("Mean number of germinated seeds / visit")+
   geom_errorbar(aes(ymin=germ-se, ymax=germ+se),
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))+
   scale_x_discrete(labels=c("0", "1","3", "5"))
 dev.off()
+
+#mean germination and SEs or SDs
+head(substr)
+#control mean percentage of germinated seeds and its SD
+control <- c(sum (substr$germ [substr$dish == "1"]),
+          sum (substr$germ [substr$dish == "2"]),
+          sum (substr$germ [substr$dish == "3"]))
+m0=mean(control) #mean germination
+p0=(m0/25)*100                                 #mean germination in %
+p0
+
+s0=sd(control)
+sd0=(s0/25)*100
+sd0
+
+# depth 1 mean percentage of germinated seeds and its SD
+depth1 <- c(sum (substr$germ [substr$dish == "4"]),
+             sum (substr$germ [substr$dish == "5"]),
+             sum (substr$germ [substr$dish == "6"]))
+m0=mean(depth1) #mean germination
+p0=(m0/25)*100                                 #mean germination in %
+p0
+
+s0=sd(depth1)
+sd0=(s0/25)*100
+sd0
+# depth 2 mean percentage of germinated seeds and its SD
+depth2 <- c(sum (substr$germ [substr$dish == "7"]),
+            sum (substr$germ [substr$dish == "8"]),
+            sum (substr$germ [substr$dish == "9"]))
+m0=mean(depth2) #mean germination
+p0=(m0/25)*100                                 #mean germination in %
+p0
+
+s0=sd(depth2)
+sd0=(s0/25)*100
+sd0
+
+# depth 3 mean percentage of germinated seeds and its SD
+depth3 <- c(sum (substr$germ [substr$dish == "10"]),
+            sum (substr$germ [substr$dish == "11"]),
+            sum (substr$germ [substr$dish == "12"]))
+m0=mean(depth3) #mean germination
+p0=(m0/25)*100                                 #mean germination in %
+p0
+
+s0=sd(depth3)
+sd0=(s0/25)*100
+sd0
+
