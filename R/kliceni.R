@@ -15,7 +15,7 @@ binom.test (33,117,0.33333333333333) #LABORKA + VENKU
 binom.test(0, 75, 0.1333333333)
 binom.test(0, 75, 0.53333333333333)
 binom.test(0, 150, 0.33333333333333)
-install.packages ("ggplot2")
+#install.packages ("ggplot2")
 library (ggplot2)
 #I have doubts about these test because i am doing multiple comparisons
 #, which is not statisticaly correct. I should try something else...
