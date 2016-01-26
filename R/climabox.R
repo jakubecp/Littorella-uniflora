@@ -1,15 +1,16 @@
 rm(list=ls())
-# reshaping the data to be in tidy format
-library(dplyr) # manipulation with original data
-library (lazyeval) # manipulation with original data
-library(tidyr) # manipulation with original data
+#packages used for data analysis
+# install.packages(c("reshape2", "ggplot2", "Rmisc"))
+# library(dplyr) # manipulation with original data
+# library (lazyeval) # manipulation with original data
+# library(tidyr) # manipulation with original data
 library(reshape2) # manipulation with original data
 library(ggplot2) # plotting graphs
 library(Rmisc) # summarySE function for SE and CI calcul. and ploting
 library (MASS) # dose.p function for estimation of limitting depth of soil layer
-
+#loading data into R
 data=read.csv ("resubmision/proklicovani_klima.csv", header=TRUE, sep=";") 
-
+# reshaping the data to be in tidy format
 #treat will be left out and not melted, but rest will be
 substr <- melt (data, c("depth", "dish")) 
 
@@ -64,5 +65,6 @@ p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   ylab("Mean number of germinated seeds")+
   geom_errorbar(aes(ymin=germ-se, ymax=germ+se),
     width=.2,                    # Width of the error bars
-    position=position_dodge(.9))
+    position=position_dodge(.9))+
+  scale_x_discrete(labels=c("0", "1","3", "5"))
 dev.off()

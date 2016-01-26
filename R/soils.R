@@ -51,10 +51,12 @@ tiff (filename="outputs/soils_barplots.tiff",
   width=5000, height=3500, 
   compression="lzw", res= 800)
 p = ggplot (sumary.dev, aes (y=count, x=treat))
-p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
+p2=p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Germination substrate")+
   ylab("Mean nmber of germinated seeds")+
     geom_errorbar(aes(ymin=count-se, ymax=count+se),
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))
+p3=p2+ coord_flip()
+p4=p3+scale_x_discrete(labels=c("control", "sand+jil","sand+raselina", "sand+bahno", "bahno", "sand", "jil", "raselina", "topsoil"))
 dev.off()
