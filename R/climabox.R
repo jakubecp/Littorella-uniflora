@@ -24,7 +24,7 @@ plot (substr$depth, substr$germ)
 
 #results will go into this data frame and will be used for further analysis
 levels (substr$depth)
-treat <- c("a", "b", "c", "d")
+treat <- c(0,1,3,5)
 germ <- c(sum (substr$germ [substr$depth == "a"]),
           sum (substr$germ [substr$depth == "b"]),
           sum (substr$germ [substr$depth == "c"]),
