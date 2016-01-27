@@ -41,6 +41,7 @@ m1=glm(y~treat, family=binomial)
 anova(m1, test="Ch")
 summary (m1)
 
+sum (y)
 #ploting original data (not model)
 ggplot(substr, aes(x=depth, y=germ))+
   geom_boxplot ()
@@ -62,11 +63,11 @@ tiff (filename="outputs/climabox_barplots_depth.tiff",
 p = ggplot (sumary.dev, aes (y=germ, x=depth))
 p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Depth of substrate")+
-  ylab("Mean number of germinated seeds / visit")+
+  ylab("Mean number of germinated seeds / inspection")+
   geom_errorbar(aes(ymin=germ-se, ymax=germ+se),
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))+
-  scale_x_discrete(labels=c("0", "1","3", "5"))
+  scale_x_discrete(labels=c("Control", "1","3", "5"))
 dev.off()
 
 head(substr)
