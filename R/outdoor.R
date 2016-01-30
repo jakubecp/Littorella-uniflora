@@ -7,6 +7,7 @@ library(reshape2) # manipulation with original data
 library(ggplot2) # plotting graphs
 library(Rmisc) # summarySE function for SE and CI calcul. and ploting
 library (MASS) # dose.p function for estimation of limitting depth of soil layer
+library (broom)
 data=read.csv ("resubmision/proklicovani_sklenik.csv", header=TRUE, sep=";") 
 
 #treat will be left out and not melted, but rest will be
@@ -38,7 +39,7 @@ y<-cbind(germ, total - germ) # this vector should be feedid into binomial model
 m1=glm(y~treat, family=binomial)
 anova(m1, test="Ch")
 summary (m1)
-
+tidy (m1)
 #ploting original data (not model)
 ggplot(substr, aes(x=depth, y=germ))+
   geom_boxplot ()

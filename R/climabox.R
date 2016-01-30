@@ -8,6 +8,7 @@ library(reshape2) # manipulation with original data
 library(ggplot2) # plotting graphs
 library(Rmisc) # summarySE function for SE and CI calcul. and ploting
 library (MASS) # dose.p function for estimation of limitting depth of soil layer
+library (broom)
 #loading data into R
 data=read.csv ("resubmision/proklicovani_klima.csv", header=TRUE, sep=";") 
 # reshaping the data to be in tidy format
@@ -40,7 +41,7 @@ y<-cbind(germ, total - germ) # this vector should be feedid into binomial model
 m1=glm(y~treat, family=binomial)
 anova(m1, test="Ch")
 summary (m1)
-
+tidy (m1)
 sum (y)
 #ploting original data (not model)
 ggplot(substr, aes(x=depth, y=germ))+
