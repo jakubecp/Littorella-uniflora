@@ -45,6 +45,12 @@ anova(m1, test="Ch")
 summary (m1)
 tidy (m1)
 
+par(mfrow=c(1,1))
+rd=residuals(m1)
+plot(rd)
+qqnorm(residuals(m1, type="deviance"))
+abline(a=0,b=1)
+
 #barplot of mean or median germination success across different substrates.#summarySE is function, which is preparing data to be ploted with SE or confidence intervals...
 sumary.dev = summarySE (substr, 
   measurevar="count", groupvars="treat")

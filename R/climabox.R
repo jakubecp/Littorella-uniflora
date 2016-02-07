@@ -43,6 +43,13 @@ anova(m1, test="Ch")
 summary (m1)
 tidy (m1)
 sum (y)
+
+rd=residuals(m1,type = c("deviance"))
+par(mfrow=c(1,1))
+rd=residuals(m1)
+plot(rd)
+qqnorm(residuals(m1, type="deviance"))
+abline(a=0,b=1)
 #ploting original data (not model)
 ggplot(substr, aes(x=depth, y=germ))+
   geom_boxplot ()

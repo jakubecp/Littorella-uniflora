@@ -43,6 +43,8 @@ m1=glm(y~treat, family=binomial)
 anova(m1, test="Ch")
 summary (m1)
 tidy (m1)
+par(mfrow=c(2,1))
+plot (m1)
 #barplot of mean or median germination success across different substrates.#summarySE is function, which is preparing data to be ploted with SE or confidence intervals...
 sumary.dev = summarySE (substr, measurevar="germ", groupvars="loc")
 
