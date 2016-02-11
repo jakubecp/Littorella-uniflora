@@ -55,9 +55,9 @@ abline(a=0,b=1)
 sumary.dev = summarySE (substr, 
   measurevar="count", groupvars="treat")
 
-tiff (filename="outputs/substrates_germination_barplots.tiff", 
-  width=5000, height=3500, 
-  compression="lzw", res= 800)
+# tiff (filename="outputs/substrates_germination_barplots.tiff", 
+#   width=5000, height=3500, 
+#   compression="lzw", res= 800)
 p = ggplot (sumary.dev, aes (y=count, x=treat))
 p2=p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Germination substrate")+
@@ -67,7 +67,7 @@ p2=p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
     position=position_dodge(.9))
 p3=p2+ coord_flip()
 p3+scale_x_discrete(labels=c("Control", "Sand+Clay","Sand+Peat", "Sand+Pond mud", "Pond mud", "Sand", "Clay", "Peat", "Topsoil"))
-dev.off()
+# dev.off()
 #substrates_germination_barplots
 
 #control mean percentage of germinated seeds and its SD
