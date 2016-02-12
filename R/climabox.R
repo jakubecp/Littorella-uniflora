@@ -10,50 +10,34 @@ library(Rmisc) # summarySE function for SE and CI calcul. and ploting
 library (MASS) # dose.p function for estimation of limitting depth of soil layer
 library (broom)
 #loading data into R
-data=read.csv ("resubmision/proklicovani_klima.csv", header=TRUE, sep=";") 
+substr=read.csv ("resubmision/proklicovani_klima.csv", header=TRUE, sep=",") 
+head(substr)
+substr$dish <- as.factor (substr$dish)
 # reshaping the data to be in tidy format
 #treat will be left out and not melted, but rest will be
-substr <- melt (data, c("depth", "dish")) 
+
 
 head (substr) #see how it looks like
-names (substr) <- c("depth", "dish", "date", "germ") #meaningful names of variables
-#data exploration
 summary (substr)
 mean (substr$germ [substr$depth == "b"])
 str (substr)
+X11()
 plot (substr$depth, substr$germ)
 
-#results will go into this data frame and will be used for further analysis
-levels (substr$depth)
-treat <- c(0,1,3,5)
-germ <- c(sum (substr$germ [substr$depth == "a"]),
-          sum (substr$germ [substr$depth == "b"]),
-          sum (substr$germ [substr$depth == "c"]),
-          sum (substr$germ [substr$depth == "d"]))
-total <- c(rep (75, 4))
-p=germ/total #probability of succesfull germination
-negative <- total-germ #how many did not germinate
-
-data_klima<- data.frame (treat, germ, total, negative, p) # dataframe of resulting values
-y<-cbind(germ, total - germ) # this vector should be feedid into binomial model
-
 #binomial model and its p-values, "a" is control so every results is compared with control by summary function
-m1=glm(y~treat, family=binomial)
-anova(m1, test="Ch")
-summary (m1)
-tidy (m1)
-sum (y)
-
-rd=residuals(m1,type = c("deviance"))
+mod <- glm(cbind(succ, fail) ~ depth, data=substr,family=binomial)
+mod
+summary(mod)
+anova(mod, test="Ch")
+X11()
 par(mfrow=c(2,2))
-plot(m1)
-rd=residuals(m1)
+plot(mod)
+rd=residuals(mod)
 plot(rd)
-qqnorm(residuals(m1, type="deviance"))
+qqnorm(residuals(mod, type="deviance"))
 abline(a=0,b=1)
 #ploting original data (not model)
-ggplot(substr, aes(x=depth, y=germ))+
-  geom_boxplot ()
+ggplot(substr, aes(x=depth, y=succ))
 
 #plot of probability of germintion on depth of soil layer
 ggplot (data_klima, aes (x=treat, y=p))+
@@ -64,19 +48,19 @@ summary (m1)
 dose.p (m1, cf=c(1:2), p=seq(0.05,0.9,0.05))
 
 #barplot of mean or median germination success across different substrates.#summarySE is function, which is preparing data to be ploted with SE or confidence intervals...
-sumary.dev = summarySE (substr, measurevar="germ", groupvars="depth")
+sumary.dev = summarySE (substr, measurevar="succ", groupvars="depth")
 
 # tiff (filename="outputs/climabox_barplots_depth.tiff", 
 #   width=5000, height=3500, 
 #   compression="lzw", res= 800)
-p = ggplot (sumary.dev, aes (y=germ, x=depth))
+p = ggplot (sumary.dev, aes (y=succ, x=depth))
 p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Depth of substrate")+
   ylab("Mean number of germinated seeds / inspection")+
-  geom_errorbar(aes(ymin=germ-se, ymax=germ+se),
+  geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
     width=.2,                    # Width of the error bars
-    position=position_dodge(.9))+
-  scale_x_discrete(labels=c("Control", "1","3", "5"))
+    position=position_dodge(.9))
+  # scale_x_discrete(labels=c("Control", "1","3", "5"))
 # dev.off()
 
 head(substr)
