@@ -2,21 +2,44 @@
 title: "Litorela"
 author: "Pavel Jakubec"
 date: "13. února 2016"
-output: html_document
+output: 
+  html_document: 
+    keep_md: yes
+    theme: journal
 ---
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
+#Litorela report
 ```{r}
-summary(cars)
+data=read.csv ("resubmision/prolicovani_ruzne_substraty_2.csv", header=TRUE, sep=";") 
+
+#explore the data
+head(data)
+str(data)
+
+#put together some model
+mod <- glm(cbind(succ, fail) ~ treat, data=data,family=binomial)
+mod
+summary(mod)
+anova(mod, test="Ch")
+
+#see what is going on with residuals
+par(mfrow=c(2,2))
+plot(mod)
+rd=residuals(mod)
+plot(rd)
+qqnorm(residuals(mod, type="deviance"))
+abline(a=0,b=1)
 ```
+```{r}
+#back-transformation of coeficients for each treatment to mean survival probability
+plogis (mod$coefficients[1]) #intercept (clay)
+plogis (mod$coefficients[1]+mod$coefficients[2]) #control
+plogis (mod$coefficients[1]+mod$coefficients[3]) #mud
+plogis (mod$coefficients[1]+mod$coefficients[4]) #peat
+plogis (mod$coefficients[1]+mod$coefficients[5]) #sand
+plogis (mod$coefficients[1]+mod$coefficients[6]) #sand_clay
+plogis (mod$coefficients[1]+mod$coefficients[7]) #sand_mud
+plogis (mod$coefficients[1]+mod$coefficients[8]) #sand_peat
+plogis (mod$coefficients[1]+mod$coefficients[9]) #topsoil
 
-You can also embed plots, for example:
-
-```{r, echo=FALSE}
-plot(cars)
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+THE END
