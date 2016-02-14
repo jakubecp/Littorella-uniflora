@@ -51,7 +51,7 @@ tiff (filename="outputs/substrates_germination_barplots2.tiff",
 p = ggplot (sumary.dev, aes (y=succ, x=reorder(treat,succ)))
 p2=p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Germination substrate")+
-  ylab("Mean nuber of germinated seeds")+
+  ylab("Mean number of germinated seeds")+
   geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))
