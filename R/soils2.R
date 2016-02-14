@@ -1,11 +1,9 @@
 rm(list=ls())
 library(checkpoint)
-checkpoint ("2016-02-11", use.knitr = T)
+# checkpoint ("2016-02-11", use.knitr = T)
 library(ggplot2) # plotting graphs
 library(Rmisc) # summarySE function for SE and CI calcul. and ploting
-library(arm)
 library (broom)
-library(blmeco) #bayesiand data analysis book
 library(rmarkdown)
 library(knitr)
 #load the data
@@ -42,3 +40,21 @@ plogis (mod$coefficients[1]+mod$coefficients[7]) #sand_mud
 plogis (mod$coefficients[1]+mod$coefficients[8]) #sand_peat
 plogis (mod$coefficients[1]+mod$coefficients[9]) #topsoil
 
+#summary for ploting
+sumary.dev = summarySE (data, 
+  measurevar="succ", groupvars="treat")
+
+#ploting in ggplot2
+# tiff (filename="outputs/substrates_germination_barplots.tiff", 
+#   width=5000, height=3500, 
+#   compression="lzw", res= 800)
+p = ggplot (sumary.dev, aes (y=succ, x=treat))
+p2=p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
+  xlab("Germination substrate")+
+  ylab("Mean nuber of germinated seeds")+
+  geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
+    width=.2,                    # Width of the error bars
+    position=position_dodge(.9))
+p3=p2+ coord_flip()
+p3+scale_x_discrete(labels=c("Control", "Sand+Clay","Sand+Peat", "Sand+Pond mud", "Pond mud", "Sand", "Clay", "Peat", "Topsoil"))
+# dev.off()
