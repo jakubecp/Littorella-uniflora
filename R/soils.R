@@ -1,4 +1,6 @@
 rm(list=ls())
+library(checkpoint)
+checkpoint("2016-02-11")
 # reshaping the data to be in tidy format
 library(dplyr) # manipulation with original data
 library (lazyeval) # manipulation with original data
