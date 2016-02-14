@@ -53,9 +53,9 @@ dose.p (m1, cf=c(1:2), p=seq(0.05,0.9,0.05))
 #confidence intervals...
 sumary.dev = summarySE (data_glass, measurevar="germ", groupvars="treat")
 
-# tiff (filename="outputs/glass_barplots_depth.tiff", 
-#   width=5000, height=3500, 
-#   compression="lzw", res= 800)
+tiff (filename="outputs/glass_barplots_depth2.tiff", 
+  width=5000, height=3500, 
+  compression="lzw", res= 800)
 p = ggplot (sumary.dev, aes (y=germ, x=treat))
 p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Depth of substrate")+
@@ -64,7 +64,7 @@ p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))+
   scale_x_discrete(labels=c("Control", "1","3", "5"))
-# dev.off()
+dev.off()
 
 #mean germination and SEs or SDs
 head(substr)

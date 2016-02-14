@@ -50,18 +50,18 @@ dose.p (m1, cf=c(1:2), p=seq(0.05,0.9,0.05))
 #barplot of mean or median germination success across different substrates.#summarySE is function, which is preparing data to be ploted with SE or confidence intervals...
 sumary.dev = summarySE (substr, measurevar="succ", groupvars="depth")
 
-# tiff (filename="outputs/climabox_barplots_depth.tiff", 
-#   width=5000, height=3500, 
-#   compression="lzw", res= 800)
+tiff (filename="outputs/climabox_barplots_depth2.tiff", 
+  width=5000, height=3500, 
+  compression="lzw", res= 800)
 p = ggplot (sumary.dev, aes (y=succ, x=depth))
 p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
-  xlab("Depth of substrate")+
-  ylab("Mean number of germinated seeds / inspection")+
+  xlab("Depth of substrate (cm)")+
+  ylab("Mean number of germinated seeds")+
   geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))
-  # scale_x_discrete(labels=c("Control", "1","3", "5"))
-# dev.off()
+  scale_x_discrete(labels=c("0", "1","3", "5"))
+dev.off()
 
 head(substr)
 #control mean percentage of germinated seeds and its SD
