@@ -1,11 +1,13 @@
 rm(list=ls())
+library(checkpoint)
+checkpoint ("2016-02-11", use.knitr = T)
 library(ggplot2) # plotting graphs
 library(Rmisc) # summarySE function for SE and CI calcul. and ploting
-# install.packages("broom")
-# install.packages("arm")
 library(arm)
 library (broom)
 library(blmeco) #bayesiand data analysis book
+library(rmarkdown)
+library(knitr)
 #load the data
 data=read.csv ("resubmision/prolicovani_ruzne_substraty_2.csv", header=TRUE, sep=";") 
 
