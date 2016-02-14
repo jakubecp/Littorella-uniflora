@@ -8,6 +8,7 @@ library(ggplot2) # plotting graphs
 library(Rmisc) # summarySE function for SE and CI calcul. and ploting
 library (broom)
 data=read.csv ("resubmision/kliceni_klima.csv", header=TRUE, sep=",") 
+head(data)
 
 # #treat will be left out and not melted, but rest will be
 # substr <- melt (data, c("loc", "dish")) 
