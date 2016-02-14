@@ -48,7 +48,7 @@ sumary.dev = summarySE (data,
 tiff (filename="outputs/substrates_germination_barplots2.tiff", 
   width=5000, height=3500, 
   compression="lzw", res= 800)
-p = ggplot (sumary.dev, aes (y=succ, x=treat))
+p = ggplot (sumary.dev, aes (y=succ, x=reorder(treat,succ)))
 p2=p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Germination substrate")+
   ylab("Mean nuber of germinated seeds")+
@@ -56,5 +56,5 @@ p2=p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))
 p3=p2+ coord_flip()
-p3+scale_x_discrete(labels=c("Control", "Sand+Clay","Sand+Peat", "Sand+Pond mud", "Pond mud", "Sand", "Clay", "Peat", "Topsoil"))
+p3+scale_x_discrete(labels=c("Topsoil", "Sand+Peat", "Sand+Clay","Peat", "Sand", "Clay", "Sand+Mud", "Mud", "Control"))
 dev.off()

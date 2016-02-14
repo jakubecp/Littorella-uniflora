@@ -59,8 +59,8 @@ p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   ylab("Mean number of germinated seeds")+
   geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
     width=.2,                    # Width of the error bars
-    position=position_dodge(.9))
-  scale_x_discrete(labels=c("0", "1","3", "5"))
+    position=position_dodge(.9))+
+  scale_x_continuous(breaks=c(0,1,3,5))
 dev.off()
 
 # head(substr)

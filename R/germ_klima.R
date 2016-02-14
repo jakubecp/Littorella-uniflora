@@ -68,7 +68,7 @@ sumary.dev = summarySE (data, measurevar="succ", groupvars="loc")
 tiff (filename="outputs/germ_clima_pond2.tiff", 
   width=5000, height=3500, 
   compression="lzw", res= 800)
-p = ggplot (sumary.dev, aes (y=succ, x=loc))
+p = ggplot (sumary.dev, aes (y=succ, x=reorder(loc, succ)))
 p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Locality")+
   ylab("Mean number of germinated seeds")+
