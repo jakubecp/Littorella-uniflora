@@ -1,2 +1,2 @@
 $ cat .gitattributes
-*.rb linguist-language=html
+*.rb linguist-language=HTML
