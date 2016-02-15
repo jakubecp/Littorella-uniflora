@@ -43,6 +43,14 @@ ggplot(substr, aes(x=depth, y=succ))
 ggplot (data_klima, aes (x=treat, y=p))+
   geom_point(size=3)
 
+#Germination probability model coeficients
+a<-plogis (mod$coefficients[1]) #intercept (control)
+b<-plogis (mod$coefficients[1]+mod$coefficients[2]) #depth 1cm
+x<-c(-10:10)
+y <- a+b*x
+data=data.frame (y,x)
+ggplot (data, aes (y=y, x=x))+
+  stat_summary(fun.y=mean, geom="line", position=position_dodge())
 #germination decrease with increasing depth of soil layer
 summary (m1)
 dose.p (m1, cf=c(1:2), p=seq(0.05,0.9,0.05))
