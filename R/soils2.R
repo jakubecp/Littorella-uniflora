@@ -1,11 +1,13 @@
 rm(list=ls())
 library(checkpoint)
-# checkpoint ("2016-02-11", use.knitr = T)
+checkpoint ("2016-02-11", use.knitr = T)
 library(ggplot2) # plotting graphs
 library(Rmisc) # summarySE function for SE and CI calcul. and ploting
 library (broom)
 library(rmarkdown)
 library(knitr)
+install.packages("multcomp")
+library(??multcomp)
 #load the data
 data=read.csv ("resubmision/prolicovani_ruzne_substraty_2.csv", header=TRUE, sep=";") 
 
@@ -18,6 +20,8 @@ mod <- glm(cbind(succ, fail) ~ treat, data=data,family=binomial)
 mod
 summary(mod)
 anova(mod, test="Ch")
+summary(glht(mod, mcp(treat="Tukey")))
+
 
 #see what is going on with residuals
 X11()
