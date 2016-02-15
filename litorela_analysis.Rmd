@@ -2,33 +2,53 @@
 title: "Litorela"
 author: "Pavel Jakubec"
 date: "13. února 2016"
-output: 
-  html_document: 
+output:
+  html_document:
     keep_md: yes
     theme: cerulean
+  pdf_document: default
+  word_document: default
 ---
-#Litorela report
-```{r}
+# Litorela report  
+## Effect of soil type on germination of Litorela uniflora   
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(ggplot2) # plotting graphs
+library(Rmisc) # summarySE function for SE and CI calcul. and ploting
+library (broom)
+```
+
+### Model:
+* succ = number of germinated seeds  
+* fail = succ - sum (all seeds)   
+* treat = soil type   
+```{r, echo=F}
 data=read.csv ("resubmision/prolicovani_ruzne_substraty_2.csv", header=TRUE, sep=";") 
-
-#explore the data
-head(data)
-str(data)
-
+```
+```{r}
 #put together some model
 mod <- glm(cbind(succ, fail) ~ treat, data=data,family=binomial)
 mod
 summary(mod)
 anova(mod, test="Ch")
+```
+### Results  
+Vliv pudniho typu je vyznamny.  
 
+### Residuals  
+Residua se chovaji pomerne normalne, takze model fituje data dobre.  
+```{r, error=FALSE}
 #see what is going on with residuals
 par(mfrow=c(2,2))
 plot(mod)
+par(mfrow=c(1,2))
 rd=residuals(mod)
 plot(rd)
 qqnorm(residuals(mod, type="deviance"))
 abline(a=0,b=1)
 ```
+
+### Germination probability (%)   
+
 ```{r}
 #back-transformation of coeficients for each treatment to mean survival probability
 plogis (mod$coefficients[1]) #intercept (clay)
@@ -42,4 +62,205 @@ plogis (mod$coefficients[1]+mod$coefficients[8]) #sand_peat
 plogis (mod$coefficients[1]+mod$coefficients[9]) #topsoil
 
 ```
-THE END
+### Bar plot:   
+```{r echo=FALSE}
+sumary.dev = summarySE (data, 
+  measurevar="succ", groupvars="treat") #data summary
+p = ggplot (sumary.dev, aes (y=succ, x=reorder(treat,succ)))
+p2=p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
+  xlab("Germination substrate")+
+  ylab("Mean number of germinated seeds")+
+  geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
+    width=.2,                    # Width of the error bars
+    position=position_dodge(.9))
+p3=p2+ coord_flip()
+p3+scale_x_discrete(labels=c("Topsoil", "Sand+Peat", "Sand+Clay","Peat", "Sand", "Clay", "Sand+Mud", "Mud", "Control"))
+rm(list=ls())
+```
+
+## THE END   
+
+## Effect of place of origin on germination of Litorela uniflora   
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(ggplot2) # plotting graphs
+library(Rmisc) # summarySE function for SE and CI calcul. and ploting
+library (broom)
+```
+
+### Model:
+* succ = number of germinated seeds    
+* fail = succ - sum (all seeds)    
+* loc = place of origin  
+```{r, echo=F}
+data=read.csv ("resubmision/kliceni_klima.csv", header=TRUE, sep=",") 
+```
+### Results
+
+Vliv lokality ma vyznamny vliv na klicivost semen L. uniflora.  
+```{r}
+mod <- glm(cbind(succ, fail) ~ loc, data=data,family=binomial)
+mod
+summary(mod)
+anova(mod, test="Ch")
+```
+
+### Residuals   
+
+Residua se chovaji pomerne normalne, takze model fituje data dobre.   
+```{r}
+par(mfrow=c(2,2))
+plot(mod)
+par(mfrow=c(1,2))
+rd=residuals(mod)
+plot(rd)
+qqnorm(residuals(mod, type="deviance"))
+abline(a=0,b=1)
+
+```
+
+### Germination probability (%)   
+Bohuzel netusim co ktery kod znamena, takze je to tam takto. Pripadalo mi to lepsi nez lok1-lokx.   
+```{r}
+#plogis - "ka", "kr", "la", "mr", "no", "os", "ry", "st"
+plogis (mod$coefficients[1]) #intercept (ka)
+plogis (mod$coefficients[1]+mod$coefficients[2]) #kr
+plogis (mod$coefficients[1]+mod$coefficients[3]) #la
+plogis (mod$coefficients[1]+mod$coefficients[4]) #mr
+plogis (mod$coefficients[1]+mod$coefficients[5]) #no
+plogis (mod$coefficients[1]+mod$coefficients[6]) #os
+plogis (mod$coefficients[1]+mod$coefficients[7]) #ry
+plogis (mod$coefficients[1]+mod$coefficients[8]) #st
+```
+###Bar plot   
+```{r, echo=FALSE, warning=FALSE, error=FALSE}
+sumary.dev = summarySE (data, measurevar="succ", groupvars="loc")
+
+
+p = ggplot (sumary.dev, aes (y=succ, x=reorder(loc, succ)))
+p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
+  xlab("Locality")+
+  ylab("Mean number of germinated seeds")+
+  geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
+    width=.2,                    # Width of the error bars
+    position=position_dodge(.9))
+
+rm(list=ls())
+```
+
+### THE END  
+
+## Germination under a layer of soil (climabox)   
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(ggplot2) # plotting graphs
+library(Rmisc) # summarySE function for SE and CI calcul. and ploting
+library (broom)
+```
+
+### Model:   
+* succ = number of germinated seeds  
+* fail = succ - sum (all seeds)  
+* depth = soil layer depth  
+```{r, echo=F}
+substr=read.csv ("resubmision/proklicovani_klima.csv", header=TRUE, sep=",")  
+```
+### Results 
+Vliv faktoru hloubka je vyznamny. 
+```{r}
+#put together some model
+mod <- glm(cbind(succ, fail) ~ depth, data=substr,family=binomial)
+mod
+summary(mod)
+anova(mod, test="Ch")
+```
+
+### Residuals  
+Residua se chovaji pomerne normalne, takze model fituje data dobre.  
+```{r, error=FALSE}
+#see what is going on with residuals
+par(mfrow=c(2,2))
+plot(mod)
+par(mfrow=c(1,2))
+rd=residuals(mod)
+plot(rd)
+qqnorm(residuals(mod, type="deviance"))
+abline(a=0,b=1)
+```
+
+### Barplot  
+```{r, echo=FALSE, warning=FALSE, error=FALSE}
+sumary.dev = summarySE (substr, measurevar="succ", groupvars="depth")
+p = ggplot (sumary.dev, aes (y=succ, x=depth))
+p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
+  xlab("Depth of substrate (cm)")+
+  ylab("Mean number of germinated seeds")+
+  geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
+    width=.2,                    # Width of the error bars
+    position=position_dodge(.9))+
+  scale_x_continuous(breaks=c(0,1,3,5))
+
+rm(list=ls())
+```
+
+###THE END   
+
+##Germination under a layer of soil (glasshouse)   
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(ggplot2) # plotting graphs
+library(Rmisc) # summarySE function for SE and CI calcul. and ploting
+library (broom)
+```
+
+### Model:
+* y = number of germinated seeds  / number of fails  
+* treat = soil layer depth  
+```{r, echo=F}
+data=read.csv ("resubmision/proklicovani_sklenik.csv", header=TRUE, sep=";") 
+treat <- c(0,0,0,1,1,1,3,3,3,5,5,5)
+germ <- apply(data[,3:18],1, sum)
+length(germ)
+total <- c(rep (25, 12))
+p=germ/total #probability of succesfull germination
+negative <- total-germ #how many did not germinate
+
+data_glass<- data.frame (treat, germ, total, negative, p) # dataframe of resulting values
+y<-cbind(germ, total - germ) # this vector should be feedid into binomial model
+
+```
+### Results   
+Vliv faktoru hloubka je vyznamny.  
+```{r}
+#put together some model
+m1=glm(y~treat, family=binomial)
+m1
+anova(m1, test="Ch")
+summary(m1)
+```
+### Residuals   
+Residua se chovaji divne. Asi schazi nejaky vysvetlujici faktor.
+```{r, error=FALSE}
+#see what is going on with residuals
+par(mfrow=c(2,2))
+plot(m1)
+rd=residuals(m1,type = c("deviance"))
+par(mfrow=c(1,2))
+rd=residuals(m1)
+plot(rd)
+qqnorm(residuals(m1, type="deviance"))
+abline(a=0,b=1)
+```
+
+### Barplot
+```{r, echo=FALSE, warning=FALSE, error=FALSE}
+sumary.dev = summarySE (data_glass, measurevar="germ", groupvars="treat")
+p = ggplot (sumary.dev, aes (y=germ, x=treat))
+p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
+  xlab("Depth of substrate (cm)")+
+  ylab("Mean number of germinated seeds")+
+  geom_errorbar(aes(ymin=germ-se, ymax=germ+se),
+    width=.2,                    # Width of the error bars
+    position=position_dodge(.9))+
+  scale_x_continuous (breaks=c(0,1,3,5))
+
+rm(list=ls())
+```
