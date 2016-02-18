@@ -8,8 +8,12 @@ Pavel Jakubec
 ### Model:
 * succ = number of germinated seeds  
 * fail = succ - sum (all seeds)   
-* treat = soil type   
+* treat = soil type  
 
+
+```r
+data=read.csv ("resubmision/prolicovani_ruzne_substraty_2.csv", header=TRUE, sep=";") 
+```
 
 ```r
 #put together some model
@@ -513,6 +517,7 @@ abline(a=0,b=1)
 ### Model:
 * y = number of germinated seeds  / number of fails  
 * treat = soil layer depth  
+
 
 ```
 ## [1] 12

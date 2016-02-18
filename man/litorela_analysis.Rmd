@@ -20,9 +20,11 @@ library (broom)
 ### Model:
 * succ = number of germinated seeds  
 * fail = succ - sum (all seeds)   
-* treat = soil type   
-```{r, echo=F}
+* treat = soil type  
+
+```{r}
 data=read.csv ("resubmision/prolicovani_ruzne_substraty_2.csv", header=TRUE, sep=";") 
+
 ```
 ```{r}
 #put together some model
@@ -64,17 +66,22 @@ plogis (mod$coefficients[1]+mod$coefficients[9]) #topsoil
 ```
 ### Bar plot:   
 ```{r echo=FALSE}
+#summary for ploting
 sumary.dev = summarySE (data, 
-  measurevar="succ", groupvars="treat") #data summary
+  measurevar="succ", groupvars="treat")
+sumary.dev$succ <- sumary.dev$succ*10
+sumary.dev$se <- sumary.dev$se*10
+sumary.dev <- sumary.dev[-(9),]
+
 p = ggplot (sumary.dev, aes (y=succ, x=reorder(treat,succ)))
 p2=p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Germination substrate")+
-  ylab("Mean number of germinated seeds")+
+  ylab("Mean germination (%)")+
   geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))
 p3=p2+ coord_flip()
-p3+scale_x_discrete(labels=c("Topsoil", "Sand+Peat", "Sand+Clay","Peat", "Sand", "Clay", "Sand+Mud", "Mud", "Control"))
+p3+scale_x_discrete(labels=c("Sand+Peat", "Sand+Clay","Peat", "Sand", "Clay", "Sand+Mud", "Mud", "Control"))
 rm(list=ls())
 ```
 
@@ -134,12 +141,15 @@ plogis (mod$coefficients[1]+mod$coefficients[8]) #st
 ###Bar plot   
 ```{r, echo=FALSE, warning=FALSE, error=FALSE}
 sumary.dev = summarySE (data, measurevar="succ", groupvars="loc")
+sumary.dev$succ <- sumary.dev$succ/75*100
+sumary.dev$se <- sumary.dev$se/75*100
+sumary.dev <- sumary.dev[-(5),]
 
 
 p = ggplot (sumary.dev, aes (y=succ, x=reorder(loc, succ)))
 p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Locality")+
-  ylab("Mean number of germinated seeds")+
+  ylab("Mean germination (%)")+
   geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))
@@ -189,10 +199,14 @@ abline(a=0,b=1)
 ### Barplot  
 ```{r, echo=FALSE, warning=FALSE, error=FALSE}
 sumary.dev = summarySE (substr, measurevar="succ", groupvars="depth")
+sumary.dev$succ <- sumary.dev$succ/75*100
+sumary.dev$se <- sumary.dev$se/75*100
+
+
 p = ggplot (sumary.dev, aes (y=succ, x=depth))
 p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Depth of substrate (cm)")+
-  ylab("Mean number of germinated seeds")+
+  ylab("Mean germination (%)")+
   geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))+
@@ -214,6 +228,7 @@ library (broom)
 ### Model:
 * y = number of germinated seeds  / number of fails  
 * treat = soil layer depth  
+
 ```{r, echo=F}
 data=read.csv ("resubmision/proklicovani_sklenik.csv", header=TRUE, sep=";") 
 treat <- c(0,0,0,1,1,1,3,3,3,5,5,5)
@@ -225,7 +240,6 @@ negative <- total-germ #how many did not germinate
 
 data_glass<- data.frame (treat, germ, total, negative, p) # dataframe of resulting values
 y<-cbind(germ, total - germ) # this vector should be feedid into binomial model
-
 ```
 ### Results   
 Vliv faktoru hloubka je vyznamny.  
@@ -253,14 +267,17 @@ abline(a=0,b=1)
 ### Barplot
 ```{r, echo=FALSE, warning=FALSE, error=FALSE}
 sumary.dev = summarySE (data_glass, measurevar="germ", groupvars="treat")
+sumary.dev$germ <- sumary.dev$germ/75*100
+sumary.dev$se <- sumary.dev$se/75*100
+
+
 p = ggplot (sumary.dev, aes (y=germ, x=treat))
 p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Depth of substrate (cm)")+
-  ylab("Mean number of germinated seeds")+
+  ylab("Mean germination (%)")+
   geom_errorbar(aes(ymin=germ-se, ymax=germ+se),
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))+
   scale_x_continuous (breaks=c(0,1,3,5))
-
 rm(list=ls())
 ```
