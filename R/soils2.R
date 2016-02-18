@@ -6,8 +6,8 @@ library(Rmisc) # summarySE function for SE and CI calcul. and ploting
 library (broom)
 library(rmarkdown)
 library(knitr)
-install.packages("multcomp")
-library(??multcomp)
+#install.packages("multcomp")
+library(multcomp)
 #load the data
 data=read.csv ("resubmision/prolicovani_ruzne_substraty_2.csv", header=TRUE, sep=";") 
 
@@ -47,7 +47,9 @@ plogis (mod$coefficients[1]+mod$coefficients[9]) #topsoil
 #summary for ploting
 sumary.dev = summarySE (data, 
   measurevar="succ", groupvars="treat")
-
+sumary.dev$succ <- sumary.dev$succ*10
+sumary.dev$se <- sumary.dev$se*10
+sumary.dev <- sumary.dev[-(9),]
 #ploting in ggplot2
 tiff (filename="outputs/substrates_germination_barplots2.tiff", 
   width=5000, height=3500, 
@@ -55,10 +57,10 @@ tiff (filename="outputs/substrates_germination_barplots2.tiff",
 p = ggplot (sumary.dev, aes (y=succ, x=reorder(treat,succ)))
 p2=p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Germination substrate")+
-  ylab("Mean number of germinated seeds")+
+  ylab("Mean germination (%)")+
   geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))
 p3=p2+ coord_flip()
-p3+scale_x_discrete(labels=c("Topsoil", "Sand+Peat", "Sand+Clay","Peat", "Sand", "Clay", "Sand+Mud", "Mud", "Control"))
+p3+scale_x_discrete(labels=c("Sand+Peat", "Sand+Clay","Peat", "Sand", "Clay", "Sand+Mud", "Mud", "Control"))
 dev.off()

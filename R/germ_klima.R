@@ -64,6 +64,9 @@ plogis (mod$coefficients[1]+mod$coefficients[8]) #st
 
 #barplot of mean or median germination success across different substrates.#summarySE is function, which is preparing data to be ploted with SE or confidence intervals...
 sumary.dev = summarySE (data, measurevar="succ", groupvars="loc")
+sumary.dev$succ <- sumary.dev$succ/75*100
+sumary.dev$se <- sumary.dev$se/75*100
+sumary.dev <- sumary.dev[-(5),]
 
 tiff (filename="outputs/germ_clima_pond2.tiff", 
   width=5000, height=3500, 
@@ -71,7 +74,7 @@ tiff (filename="outputs/germ_clima_pond2.tiff",
 p = ggplot (sumary.dev, aes (y=succ, x=reorder(loc, succ)))
 p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Locality")+
-  ylab("Mean number of germinated seeds")+
+  ylab("Mean germination (%)")+
   geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))
