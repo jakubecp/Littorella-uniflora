@@ -52,6 +52,9 @@ dose.p (m1, cf=c(1:2), p=seq(0.05,0.9,0.05))
 #summarySE is function, which is preparing data to be ploted with SE or 
 #confidence intervals...
 sumary.dev = summarySE (data_glass, measurevar="germ", groupvars="treat")
+sumary.dev$germ <- sumary.dev$germ/75*100
+sumary.dev$se <- sumary.dev$se/75*100
+
 
 tiff (filename="outputs/glass_barplots_depth2.tiff", 
   width=5000, height=3500, 
@@ -59,7 +62,7 @@ tiff (filename="outputs/glass_barplots_depth2.tiff",
 p = ggplot (sumary.dev, aes (y=germ, x=treat))
 p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   xlab("Depth of substrate (cm)")+
-  ylab("Mean number of germinated seeds")+
+  ylab("Mean germination (%)")+
   geom_errorbar(aes(ymin=germ-se, ymax=germ+se),
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))+
