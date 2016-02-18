@@ -1,2 +1,2 @@
-$ cat .gitattributes
-*.rb linguist-language=HTML
+project-docs/* linguist-documentation
+docs/formatter.rb linguist-documentation=false
