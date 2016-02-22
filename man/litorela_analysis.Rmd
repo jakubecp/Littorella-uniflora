@@ -3,11 +3,11 @@ title: "Litorela"
 author: "Pavel Jakubec"
 date: "13. února 2016"
 output:
+  word_document: default
+  pdf_document: default
   html_document:
     keep_md: yes
     theme: cerulean
-  pdf_document: default
-  word_document: default
 ---
 # Litorela report  
 ## Effect of soil type on germination of Litorela uniflora   
@@ -49,21 +49,7 @@ qqnorm(residuals(mod, type="deviance"))
 abline(a=0,b=1)
 ```
 
-### Germination probability (%)   
 
-```{r}
-#back-transformation of coeficients for each treatment to mean survival probability
-plogis (mod$coefficients[1]) #intercept (clay)
-plogis (mod$coefficients[1]+mod$coefficients[2]) #control
-plogis (mod$coefficients[1]+mod$coefficients[3]) #mud
-plogis (mod$coefficients[1]+mod$coefficients[4]) #peat
-plogis (mod$coefficients[1]+mod$coefficients[5]) #sand
-plogis (mod$coefficients[1]+mod$coefficients[6]) #sand_clay
-plogis (mod$coefficients[1]+mod$coefficients[7]) #sand_mud
-plogis (mod$coefficients[1]+mod$coefficients[8]) #sand_peat
-plogis (mod$coefficients[1]+mod$coefficients[9]) #topsoil
-
-```
 ### Bar plot:   
 ```{r echo=FALSE}
 #summary for ploting
@@ -82,9 +68,15 @@ p2=p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
     position=position_dodge(.9))
 p3=p2+ coord_flip()
 p3+scale_x_discrete(labels=c("Sand+Peat", "Sand+Clay","Peat", "Sand", "Clay", "Sand+Mud", "Mud", "Control"))
-rm(list=ls())
+
 ```
 
+### Germination probability (%)   
+
+```{r}
+sumary.dev
+rm(list=ls())
+```
 ## THE END   
 
 ## Effect of place of origin on germination of Litorela uniflora   
@@ -125,19 +117,7 @@ abline(a=0,b=1)
 
 ```
 
-### Germination probability (%)   
-Bohuzel netusim co ktery kod znamena, takze je to tam takto. Pripadalo mi to lepsi nez lok1-lokx.   
-```{r}
-#plogis - "ka", "kr", "la", "mr", "no", "os", "ry", "st"
-plogis (mod$coefficients[1]) #intercept (ka)
-plogis (mod$coefficients[1]+mod$coefficients[2]) #kr
-plogis (mod$coefficients[1]+mod$coefficients[3]) #la
-plogis (mod$coefficients[1]+mod$coefficients[4]) #mr
-plogis (mod$coefficients[1]+mod$coefficients[5]) #no
-plogis (mod$coefficients[1]+mod$coefficients[6]) #os
-plogis (mod$coefficients[1]+mod$coefficients[7]) #ry
-plogis (mod$coefficients[1]+mod$coefficients[8]) #st
-```
+
 ###Bar plot   
 ```{r, echo=FALSE, warning=FALSE, error=FALSE}
 sumary.dev = summarySE (data, measurevar="succ", groupvars="loc")
@@ -154,9 +134,14 @@ p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))
 
+
+```
+### Germination probability (%)   
+Bohuzel netusim co ktery kod znamena, takze je to tam takto. Pripadalo mi to lepsi nez lok1-lokx.   
+```{r}
+sumary.dev
 rm(list=ls())
 ```
-
 ### THE END  
 
 ## Germination under a layer of soil (climabox)   
@@ -212,6 +197,11 @@ p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
     position=position_dodge(.9))+
   scale_x_continuous(breaks=c(0,1,3,5))
 
+
+```
+### Germination probability (%)
+```{r}
+sumary.dev
 rm(list=ls())
 ```
 
@@ -279,5 +269,10 @@ p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))+
   scale_x_continuous (breaks=c(0,1,3,5))
+```
+
+### Germination probability (%)
+```{r}
+sumary.dev
 rm(list=ls())
 ```
