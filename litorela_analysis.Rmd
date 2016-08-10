@@ -1,0 +1,313 @@
+---
+title: "Litorela"
+author: "Pavel Jakubec"
+date: "13. února 2016"
+output:
+  word_document: default
+  pdf_document: default
+  html_document:
+    keep_md: yes
+    theme: cerulean
+---
+# Litorela report  
+## Effect of soil type on germination of Litorela uniflora   
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(ggplot2) # plotting graphs
+# install.packages (c("ggplot2","Rmisc","broom","boot"))
+library(Rmisc) # summarySE function for SE and CI calcul. and ploting
+library (broom)
+library (boot)
+```
+
+### Model:
+* succ = number of germinated seeds  
+* fail = succ - sum (all seeds)   
+* treat = soil type  
+
+```{r}
+data=read.csv ("data/prolicovani_ruzne_substraty_2.csv", header=TRUE, sep=";") 
+
+```
+```{r}
+#Binomial GLM model
+mod <- glm(cbind(succ, fail) ~ treat, data=data,family=binomial)
+mod
+summary(mod)
+#Testing effect of treatment
+anova(mod, test="Ch")
+#Coefficient for each treatment
+coef <- coef(mod)
+control <- inv.logit(coef[1]+coef[2])
+mud <- inv.logit(coef[1]+coef[3])
+peat <- inv.logit(coef[1]+coef[4])
+sand <- inv.logit(coef[1]+coef[5])
+sand_clay <- inv.logit(coef[1]+coef[6])
+sand_mud <- inv.logit(coef[1]+coef[7])
+sand_peat <- inv.logit(coef[1]+coef[8])
+
+```
+### Results  
+Effect of soil type is statistically significant.  
+
+### Residuals  
+Residuals behave normaly and model is fitting the data well.  
+```{r, error=FALSE}
+#see what is going on with residuals
+par(mfrow=c(2,2))
+plot(mod)
+par(mfrow=c(1,2))
+rd=residuals(mod)
+plot(rd)
+qqnorm(residuals(mod, type="deviance"))
+abline(a=0,b=1)
+```
+
+
+### Bar plot:   
+```{r echo=FALSE}
+#summary for ploting
+sumary.dev = summarySE (data, 
+  measurevar="succ", groupvars="treat")
+sumary.dev$succ <- sumary.dev$succ*10
+sumary.dev$se <- sumary.dev$se*10
+sumary.dev$sd <- sumary.dev$sd*10
+sumary.dev$ci <- sumary.dev$ci*10
+sumary.dev <- sumary.dev[-(9),]
+
+#Plotting barplot of germination rates on different soils
+p = ggplot (sumary.dev, aes (y=succ, x=reorder(treat,succ)))
+p2=p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
+  xlab("Germination substrate")+
+  ylab("Mean germination rate (%)")+
+  geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
+    width=.2,                    # Width of the error bars
+    position=position_dodge(.1))
+p3=p2+ coord_flip()
+label.df1 <- data.frame(treat="control", succ=57)
+label.df2 <- data.frame(treat=c("mud", "sand_peat", "sand_clay" ),succ=c(31,5.5,8))
+p3+scale_x_discrete(labels=c("Sand+Peat", "Sand+Clay","Peat", "Sand", "Clay", "Sand+Fishpond sediment", "Fishpond sediment", "Control"))+geom_text(data = label.df1, label = "***", nudge_x = -0.1)+geom_text(data=label.df2, label="*", nudge_x = -0.1)
+#save the output graph
+ggsave("outputs/substrate.tiff",dpi=300, scale=1.5)
+
+```
+
+### Germination probability (%)   
+
+```{r}
+sumary.dev
+rm(list=ls())
+```
+## THE END   
+
+## Effect of place of origin on germination of Litorela uniflora   
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(ggplot2) # plotting graphs
+library(Rmisc) # summarySE function for SE and CI calcul. and ploting
+library (broom)
+```
+
+### Model:
+* succ = number of germinated seeds    
+* fail = succ - sum (all seeds)    
+* loc = place of origin  
+```{r, echo=F}
+data=read.csv ("data/kliceni_klima.csv", header=TRUE, sep=",") 
+```
+   
+### Results
+Effect of place of origin is statisticly significant for germination rate of L. uniflora.  
+```{r}
+mod <- glm(cbind(succ, fail) ~ loc, data=data,family=binomial)
+mod
+summary(mod)
+anova(mod, test="Ch")
+```
+
+### Residuals   
+Residuals behave normaly therefore model is fitting the data well.   
+
+```{r}
+par(mfrow=c(2,2))
+plot(mod)
+par(mfrow=c(1,2))
+rd=residuals(mod)
+plot(rd)
+qqnorm(residuals(mod, type="deviance"))
+abline(a=0,b=1)
+
+```
+
+
+###Bar plot   
+```{r, echo=FALSE, warning=FALSE, error=FALSE}
+sumary.dev = summarySE (data, measurevar="succ", groupvars="loc")
+sumary.dev$succ <- sumary.dev$succ/25*100
+sumary.dev$se <- sumary.dev$se/25*100
+sumary.dev$sd <- sumary.dev$sd/25*100
+sumary.dev$ci <- sumary.dev$ci/25*100
+sumary.dev <- sumary.dev[-(5),]
+
+
+p = ggplot (sumary.dev, aes (y=succ, x=reorder(loc, succ)))
+p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
+  xlab("Locality")+
+  ylab("Mean germination (%)")+
+  geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
+    width=.2,                    # Width of the error bars
+    position=position_dodge(.9))
+#save the output graph
+ggsave("outputs/locality.tiff",dpi=300, scale=1.5)
+
+```
+   
+### Germination probability (%)   
+Bohuzel netusim co ktery kod znamena, takze je to tam takto. Pripadalo mi to lepsi nez lok1-lokx.   
+```{r}
+sumary.dev
+rm(list=ls())
+```
+   
+### THE END  
+
+## Germination under a layer of soil (climabox)   
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(ggplot2) # plotting graphs
+library(Rmisc) # summarySE function for SE and CI calcul. and ploting
+library (broom)
+```
+
+### Model:   
+* succ = number of germinated seeds  
+* fail = succ - sum (all seeds)  
+* depth = soil layer depth  
+```{r, echo=F}
+substr=read.csv ("data/proklicovani_klima.csv", header=TRUE, sep=",")  
+```
+   
+### Results 
+Effect of substrate depth is statistically significant. 
+```{r}
+#put together some model
+mod <- glm(cbind(succ, fail) ~ depth, data=substr,family=binomial)
+mod
+summary(mod)
+anova(mod, test="Ch")
+```
+   
+### Residuals  
+Residuals behave normaly therefore model is fitting the data well.   
+```{r, error=FALSE}
+#see what is going on with residuals
+par(mfrow=c(2,2))
+plot(mod)
+par(mfrow=c(1,2))
+rd=residuals(mod)
+plot(rd)
+qqnorm(residuals(mod, type="deviance"))
+abline(a=0,b=1)
+```
+   
+### Barplot  
+```{r, echo=FALSE, warning=FALSE, error=FALSE}
+sumary.dev = summarySE (substr, measurevar="succ", groupvars="depth")
+sumary.dev$succ <- sumary.dev$succ/25*100
+sumary.dev$se <- sumary.dev$se/25*100
+sumary.dev$sd <- sumary.dev$sd/25*100
+sumary.dev$ci <- sumary.dev$ci/25*100
+
+p = ggplot (sumary.dev, aes (y=succ, x=depth))
+p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
+  xlab("Depth of substrate (cm)")+
+  ylab("Mean germination (%)")+
+  geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
+    width=.2,                    # Width of the error bars
+    position=position_dodge(.9))+
+  scale_x_continuous(breaks=c(0,1,3,5))
+#save the output graph
+ggsave("outputs/climabox.tiff",dpi=300, scale=1.5)
+
+```
+   
+### Germination probability (%)
+```{r}
+sumary.dev
+rm(list=ls())
+```
+   
+###THE END   
+
+##Germination under a layer of soil (glasshouse)   
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(ggplot2) # plotting graphs
+library(Rmisc) # summarySE function for SE and CI calcul. and ploting
+library (broom)
+```
+   
+### Model:
+* y = number of germinated seeds  / number of fails  
+* treat = soil layer depth  
+
+```{r, echo=F}
+data=read.csv ("data/proklicovani_sklenik.csv", header=TRUE, sep=";") 
+treat <- c(0,0,0,1,1,1,3,3,3,5,5,5)
+germ <- apply(data[,3:18],1, sum)
+length(germ)
+total <- c(rep (25, 12))
+p=germ/total #probability of succesfull germination
+negative <- total-germ #how many did not germinate
+
+data_glass<- data.frame (treat, germ, total, negative, p) # dataframe of resulting values
+y<-cbind(germ, total - germ) # this vector should be feedid into binomial model
+```
+   
+### Results   
+Effect of soil depth is statistically significant.  
+```{r}
+#put together some model
+m1=glm(y~treat, family=binomial)
+m1
+anova(m1, test="Ch")
+summary(m1)
+```
+   
+### Residuals   
+Residuals behave a bit different than expected, but could be considered normaly distributed.
+```{r, error=FALSE}
+#see what is going on with residuals
+par(mfrow=c(2,2))
+plot(m1)
+rd=residuals(m1,type = c("deviance"))
+par(mfrow=c(1,2))
+rd=residuals(m1)
+plot(rd)
+qqnorm(residuals(m1, type="deviance"))
+abline(a=0,b=1)
+```
+   
+### Barplot
+```{r, echo=FALSE, warning=FALSE, error=FALSE}
+sumary.dev = summarySE (data_glass, measurevar="germ", groupvars="treat")
+sumary.dev$germ <- sumary.dev$germ/25*100
+sumary.dev$se <- sumary.dev$se/25*100
+sumary.dev$sd <- sumary.dev$sd/25*100
+sumary.dev$ci <- sumary.dev$ci/25*100
+
+p = ggplot (sumary.dev, aes (y=germ, x=treat))
+p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
+  xlab("Depth of substrate (cm)")+
+  ylab("Mean germination (%)")+
+  geom_errorbar(aes(ymin=germ-se, ymax=germ+se),
+    width=.2,                    # Width of the error bars
+    position=position_dodge(.9))+
+  scale_x_continuous (breaks=c(0,1,3,5))
+
+#save the output graph
+ggsave("outputs/glasshouse.tiff",dpi=300, scale=1.5)
+```
+   
+### Germination probability (%)
+```{r}
+sumary.dev
+rm(list=ls())
+```
