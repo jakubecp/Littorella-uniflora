@@ -1,4 +1,4 @@
-# Litorela
+# Littorella uniflora
 Pavel Jakubec  
 13. února 2016  
 # Litorela report  
@@ -133,7 +133,37 @@ abline(a=0,b=1)
 
 
 ### Bar plot:   
+
+```r
+#summary for ploting
+sumary.dev = summarySE (data, 
+  measurevar="succ", groupvars="treat")
+sumary.dev$succ <- sumary.dev$succ*10
+sumary.dev$se <- sumary.dev$se*10
+sumary.dev$sd <- sumary.dev$sd*10
+sumary.dev$ci <- sumary.dev$ci*10
+sumary.dev <- sumary.dev[-(9),]
+
+#Plotting barplot of germination rates on different soils
+p = ggplot (sumary.dev, aes (y=succ, x=reorder(treat,succ)))
+p2=p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
+  xlab("Germination substrate")+
+  ylab("Mean germination rate (%)")+
+  geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
+    width=.2,                    # Width of the error bars
+    position=position_dodge(.1))
+p3=p2+ coord_flip()
+label.df1 <- data.frame(treat="control", succ=57)
+label.df2 <- data.frame(treat=c("mud", "sand_peat", "sand_clay" ),succ=c(31,5.5,8))
+p3+scale_x_discrete(labels=c("Sand+Peat", "Sand+Clay","Peat", "Sand", "Clay", "Sand+Fishpond sediment", "Fishpond sediment", "Control"))+geom_text(data = label.df1, label = "***", nudge_x = -0.1)+geom_text(data=label.df2, label="*", nudge_x = -0.1)
+```
+
 ![](litorela_analysis_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+```r
+#save the output graph
+ggsave("outputs/substrate.tiff",dpi=100, scale=1.5)
+```
 
 ```
 ## Saving 10.5 x 7.5 in image
@@ -163,7 +193,7 @@ rm(list=ls())
 ```
 ## THE END   
 
-## Effect of place of origin on germination of Litorela uniflora   
+## Effect of place of origin on germination of Littorella uniflora   
 
 
 ### Model:
@@ -171,8 +201,8 @@ rm(list=ls())
 * fail = succ - sum (all seeds)    
 * loc = place of origin  
 
+   
 ### Results
-
 Effect of place of origin is statisticly significant for germination rate of L. uniflora.  
 
 ```r
@@ -252,20 +282,12 @@ anova(mod, test="Ch")
 ```
 
 ### Residuals   
-
 Residuals behave normaly therefore model is fitting the data well.   
+
 
 ```r
 par(mfrow=c(2,2))
 plot(mod)
-```
-
-```
-## Warning: not plotting observations with leverage one:
-##   7
-
-## Warning: not plotting observations with leverage one:
-##   7
 ```
 
 ![](litorela_analysis_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
@@ -282,14 +304,37 @@ abline(a=0,b=1)
 
 
 ###Bar plot   
+
+```r
+sumary.dev = summarySE (data, measurevar="succ", groupvars="loc")
+sumary.dev$succ <- sumary.dev$succ/25*100
+sumary.dev$se <- sumary.dev$se/25*100
+sumary.dev$sd <- sumary.dev$sd/25*100
+sumary.dev$ci <- sumary.dev$ci/25*100
+sumary.dev <- sumary.dev[-(5),]
+
+
+p = ggplot (sumary.dev, aes (y=succ, x=reorder(loc, succ)))
+p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
+  xlab("Locality")+
+  ylab("Mean germination (%)")+
+  geom_errorbar(aes(ymin=succ-se, ymax=succ+se),
+    width=.2,                    # Width of the error bars
+    position=position_dodge(.9))
+```
+
 ![](litorela_analysis_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
+```r
+#save the output graph
+ggsave("outputs/locality.tiff",dpi=100, scale=1.5)
+```
 
 ```
 ## Saving 10.5 x 7.5 in image
 ```
    
 ### Germination probability (%)   
-Bohuzel netusim co ktery kod znamena, takze je to tam takto. Pripadalo mi to lepsi nez lok1-lokx.   
 
 ```r
 sumary.dev

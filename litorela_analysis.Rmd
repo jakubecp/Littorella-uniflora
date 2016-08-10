@@ -1,13 +1,13 @@
 ---
-title: "Litorela"
+title: "Littorella uniflora"
 author: "Pavel Jakubec"
 date: "13. února 2016"
 output:
-  word_document: default
   pdf_document: default
   html_document:
     keep_md: yes
     theme: cerulean
+  word_document: default
 ---
 # Litorela report  
 ## Effect of soil type on germination of Litorela uniflora   
@@ -64,7 +64,7 @@ abline(a=0,b=1)
 
 
 ### Bar plot:   
-```{r echo=FALSE}
+```{r}
 #summary for ploting
 sumary.dev = summarySE (data, 
   measurevar="succ", groupvars="treat")
@@ -87,7 +87,7 @@ label.df1 <- data.frame(treat="control", succ=57)
 label.df2 <- data.frame(treat=c("mud", "sand_peat", "sand_clay" ),succ=c(31,5.5,8))
 p3+scale_x_discrete(labels=c("Sand+Peat", "Sand+Clay","Peat", "Sand", "Clay", "Sand+Fishpond sediment", "Fishpond sediment", "Control"))+geom_text(data = label.df1, label = "***", nudge_x = -0.1)+geom_text(data=label.df2, label="*", nudge_x = -0.1)
 #save the output graph
-ggsave("outputs/substrate.tiff",dpi=300, scale=1.5)
+ggsave("outputs/substrate.tiff",dpi=100, scale=1.5)
 
 ```
 
@@ -99,7 +99,7 @@ rm(list=ls())
 ```
 ## THE END   
 
-## Effect of place of origin on germination of Litorela uniflora   
+## Effect of place of origin on germination of Littorella uniflora   
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 library(ggplot2) # plotting graphs
 library(Rmisc) # summarySE function for SE and CI calcul. and ploting
@@ -116,7 +116,7 @@ data=read.csv ("data/kliceni_klima.csv", header=TRUE, sep=",")
    
 ### Results
 Effect of place of origin is statisticly significant for germination rate of L. uniflora.  
-```{r}
+```{r, warning=FALSE, error=FALSE}
 mod <- glm(cbind(succ, fail) ~ loc, data=data,family=binomial)
 mod
 summary(mod)
@@ -126,7 +126,7 @@ anova(mod, test="Ch")
 ### Residuals   
 Residuals behave normaly therefore model is fitting the data well.   
 
-```{r}
+```{r, warning=FALSE, error=FALSE}
 par(mfrow=c(2,2))
 plot(mod)
 par(mfrow=c(1,2))
@@ -139,7 +139,7 @@ abline(a=0,b=1)
 
 
 ###Bar plot   
-```{r, echo=FALSE, warning=FALSE, error=FALSE}
+```{r, warning=FALSE, error=FALSE}
 sumary.dev = summarySE (data, measurevar="succ", groupvars="loc")
 sumary.dev$succ <- sumary.dev$succ/25*100
 sumary.dev$se <- sumary.dev$se/25*100
@@ -156,12 +156,11 @@ p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
     width=.2,                    # Width of the error bars
     position=position_dodge(.9))
 #save the output graph
-ggsave("outputs/locality.tiff",dpi=300, scale=1.5)
+ggsave("outputs/locality.tiff",dpi=100, scale=1.5)
 
 ```
    
 ### Germination probability (%)   
-Bohuzel netusim co ktery kod znamena, takze je to tam takto. Pripadalo mi to lepsi nez lok1-lokx.   
 ```{r}
 sumary.dev
 rm(list=ls())
@@ -224,7 +223,7 @@ p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
     position=position_dodge(.9))+
   scale_x_continuous(breaks=c(0,1,3,5))
 #save the output graph
-ggsave("outputs/climabox.tiff",dpi=300, scale=1.5)
+ggsave("outputs/climabox.tiff",dpi=100, scale=1.5)
 
 ```
    
@@ -303,7 +302,7 @@ p + stat_summary(fun.y=mean, geom="bar", position=position_dodge())+
   scale_x_continuous (breaks=c(0,1,3,5))
 
 #save the output graph
-ggsave("outputs/glasshouse.tiff",dpi=300, scale=1.5)
+ggsave("outputs/glasshouse.tiff",dpi=100, scale=1.5)
 ```
    
 ### Germination probability (%)
